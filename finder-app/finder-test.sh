@@ -5,8 +5,8 @@
 set -e
 set -u
 
-make clean
-make
+#make clean
+#make
 
 
 NUMFILES=10

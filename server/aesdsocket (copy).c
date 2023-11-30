@@ -84,7 +84,7 @@ void uninit (int sig_num)
   while (!SLIST_EMPTY(&desc.head)) {
     slist_data_t *datap = SLIST_FIRST(&desc.head);
 
-    printf("free: %p, cs = %d\n", datap, datap->desc_list.cs);
+    printf("-----free: %p, cs = %d\n", datap, datap->desc_list.cs);
 
     //if (datap->desc_list.cs_e)
     //{
@@ -93,8 +93,9 @@ void uninit (int sig_num)
       pthread_join(datap->desc_list.thread, NULL);
       shutdown(datap->desc_list.cs, SHUT_RDWR);
       close(datap->desc_list.cs);
+      if (0 != datap->desc_list.cs_e)
+        free(datap->desc_list.wr_buf);
     //}
-    free(datap->desc_list.wr_buf);
 
     SLIST_REMOVE_HEAD(&desc.head, entries);
     free(datap);
@@ -353,17 +354,18 @@ void* threadfunc(void* thread_param)
   pthread_mutex_lock(&desc_p->mx);
   if ( -1 == fstat(desc.f_output, &st))
     if (0 == desc.demonize) printf("Problem to stat \n");
-  pthread_mutex_unlock(&desc_p->mx);
+
 
   par->wr_buf = calloc(sizeof(char) * st.st_size, 1);
 
-  pthread_mutex_lock(&desc_p->mx);
+
   lseek(desc.f_output, 0, SEEK_SET);
   if ((ssize = read(desc.f_output, par->wr_buf, st.st_size)) < 0)
   {
     if (0 == desc.demonize) printf("Problem to read file \n");
   }
-  pthread_mutex_unlock(&desc_p->mx);
+
+
   /*
   for (int i = 0; i < st.st_size - 1; i++)
     printf("%s", wr_buf);
@@ -372,10 +374,12 @@ void* threadfunc(void* thread_param)
 
   if ( -1 == sendall(par->cs, par->wr_buf, (int*)&st.st_size))
     if (0 == desc.demonize) printf("Problem to send \n");
+  free(par->wr_buf);
 
-  if (0 == desc.demonize) printf("Send...%ld bytes\n", st.st_size);
+  //if (0 == desc.demonize) printf("Send...%ld bytes\n", st.st_size);
 
   par->cs_e = 0;
+  pthread_mutex_unlock(&desc_p->mx);
 /*
   free(par->wr_buf);
   shutdown(par->cs, SHUT_RDWR);
@@ -561,7 +565,7 @@ while(1)
 
   // Write to slist
   datap = calloc(sizeof(slist_data_t), 1);
-  printf("calloc: %p, cs = %d\n", datap, cs);
+  printf("++++++calloc: %p, cs = %d\n", datap, cs);
   datap->desc_list.cs = cs;
   datap->desc_list.cs_e = cs_e;
   datap->desc_list.their_addr = their_addr;
@@ -576,23 +580,25 @@ while(1)
     uninit (-1);
   }
 
-  /*
-  if (0 == desc.demonize) printf("check slist-------------------\n");
+
+
+/*
   int j = 0;
-  SLIST_FOREACH(datap, &desc.head, entries)
+  slist_data_t *datap_ = NULL;
+  SLIST_FOREACH(datap_, &desc.head, entries)
   {
     if (0 == desc.demonize) printf("iteration %d\n", j);
     j++;
-    if (0 == datap->desc_list.cs_e)
+    if (0 == datap_->desc_list.cs_e)
     {
-      if (0 == desc.demonize) printf("freed cs = %d\n", datap->desc_list.cs);
-      shutdown(datap->desc_list.cs, SHUT_RDWR);
-      close(datap->desc_list.cs);
-      free(datap->desc_list.wr_buf);
-      pthread_join(datap->desc_list.thread, NULL);
+      if (0 == desc.demonize) printf("----freed %p cs = %d\n", datap_, datap_->desc_list.cs);
+      shutdown(datap_->desc_list.cs, SHUT_RDWR);
+      close(datap_->desc_list.cs);
+      //free(datap->desc_list.wr_buf);
+      pthread_join(datap_->desc_list.thread, NULL);
 
-      SLIST_REMOVE(&desc.head, datap, slist_data_s, entries);
-      free(datap);
+      SLIST_REMOVE(&desc.head, datap_, slist_data_s, entries);
+      free(datap_);
     }
 
   }

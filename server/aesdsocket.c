@@ -63,8 +63,8 @@ typedef struct
   SLIST_HEAD(slisthead, slist_data_s) head;
 } desc_t;
 
-//desc_t desc = {.file_path = "./aesdsocketdata"};
-desc_t desc = {.file_path = "/var/tmp/aesdsocketdata"};
+desc_t desc = {.file_path = "./aesdsocketdata"};
+//desc_t desc = {.file_path = "/var/tmp/aesdsocketdata"};
 desc_t *desc_p = &desc;
 
 void uninit (int sig_num)
@@ -84,7 +84,7 @@ void uninit (int sig_num)
   while (!SLIST_EMPTY(&desc.head)) {
     slist_data_t *datap = SLIST_FIRST(&desc.head);
 
-    printf("free: %p, cs = %d\n", datap, datap->desc_list.cs);
+    if (0 == desc.demonize) printf("free: %p, cs = %d\n", datap, datap->desc_list.cs);
 
     //if (datap->desc_list.cs_e)
     //{
@@ -315,7 +315,7 @@ void* threadfunc(void* thread_param)
   int ssize;
   const int SIZEBUF = 100;
   char buf[SIZEBUF];
-
+  memset (buf , 0 , SIZEBUF);
   while ((ssize = read(par->cs, buf, SIZEBUF)) > 0)
   {
     for (int i = 0; i < ssize ; i++)
@@ -353,11 +353,11 @@ void* threadfunc(void* thread_param)
   pthread_mutex_lock(&desc_p->mx);
   if ( -1 == fstat(desc.f_output, &st))
     if (0 == desc.demonize) printf("Problem to stat \n");
-  pthread_mutex_unlock(&desc_p->mx);
+  //pthread_mutex_unlock(&desc_p->mx);
 
   par->wr_buf = calloc(sizeof(char) * st.st_size, 1);
 
-  pthread_mutex_lock(&desc_p->mx);
+  //pthread_mutex_lock(&desc_p->mx);
   lseek(desc.f_output, 0, SEEK_SET);
   if ((ssize = read(desc.f_output, par->wr_buf, st.st_size)) < 0)
   {
@@ -489,7 +489,7 @@ if (1 == desc.demonize)
 
       if ((chdir("/")) < 0)
         exit(EXIT_FAILURE);
-
+/*
       if (open("/dev/null",O_RDONLY) == -1) {
         syslog (LOG_INFO, "failed to reopen stdin");
       }
@@ -499,7 +499,7 @@ if (1 == desc.demonize)
       if (open("/dev/null",O_RDWR) == -1) {
         syslog (LOG_INFO, "failed to reopen stderr");
       }
-
+*/
   /* child process */
       //int ret = execv(command[0], command);
       //printf("I'm the child ret = %d \n", ret);
@@ -510,6 +510,8 @@ if (1 == desc.demonize)
   }
 }
 
+desc.demonize = 1;
+
 status = listen(desc.server_fd, 10);
 if (0 != status){
   if (0 == desc.demonize) printf("can't listen net socket, errno = %d( %s )\n", errno, strerror( errno ));
@@ -517,7 +519,7 @@ if (0 != status){
 }
 
 
-desc.f_output = open(desc.file_path, O_RDWR | O_CREAT, S_IRWXU | S_IRWXG | S_IRWXO | S_IWOTH);
+desc.f_output = open(desc.file_path, O_RDWR | O_CREAT, S_IRWXU | S_IRWXG | S_IRWXO);
 if (-1 == desc.f_output)
 {
   if (0 == desc.demonize) printf("Cannot open the file %s\n", desc.file_path);
@@ -561,7 +563,7 @@ while(1)
 
   // Write to slist
   datap = calloc(sizeof(slist_data_t), 1);
-  printf("calloc: %p, cs = %d\n", datap, cs);
+  if (0 == desc.demonize) printf("calloc: %p, cs = %d\n", datap, cs);
   datap->desc_list.cs = cs;
   datap->desc_list.cs_e = cs_e;
   datap->desc_list.their_addr = their_addr;

@@ -192,7 +192,7 @@ void* threadfunc_time(void* thread_param)
   time_t t;
   struct tm *tmp;
   int ssize = 0;
-  time_t start_time = time(NULL);
+  //time_t start_time = time(NULL);
   mask_sig();
   while (0 == desc_p->cancel_threads)
   {

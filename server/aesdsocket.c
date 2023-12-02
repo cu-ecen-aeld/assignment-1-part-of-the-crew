@@ -63,8 +63,8 @@ typedef struct
   SLIST_HEAD(slisthead, slist_data_s) head;
 } desc_t;
 
-desc_t desc = {.file_path = "./aesdsocketdata"};
-//desc_t desc = {.file_path = "/var/tmp/aesdsocketdata"};
+//desc_t desc = {.file_path = "./aesdsocketdata"};
+desc_t desc = {.file_path = "/var/tmp/aesdsocketdata"};
 desc_t *desc_p = &desc;
 
 void uninit (int sig_num)

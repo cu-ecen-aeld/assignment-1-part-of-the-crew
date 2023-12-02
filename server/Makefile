@@ -7,18 +7,37 @@ endif
 TARGET ?= aesdsocket
 CC ?= $(CROSS_COMPILE)gcc
 CFLAGS ?= -g -Wall -Werror
-LDFLAGS ?= -pthread
+LDFLAGS ?= -pthread -lpthread -lrt
 
 
 
 default: $(TARGET)
 
 all: $(TARGET)
+
+
+# Source files
+SRCS = $(TARGET).c
+
+# Object files
+OBJS = $(SRCS:.c=.o)
+
+.c.o:
+	$(CC) -c $(CFLAGS) $^
 	
-$(TARGET): $(TARGET).c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+$(TARGET): $(OBJS)
+	$(CC) -o $@ $^ $(LDFLAGS)
+
+
+
 
 clean:
 	rm -rf *.o $(TARGET)
 	
-.PHONY: all default clean
+distclean: clean
+	
+.PHONY: all default clean distclean
+
+
+
+

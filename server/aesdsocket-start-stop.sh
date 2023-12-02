@@ -10,8 +10,8 @@ NAME=aesdsocket
 start() {
         #initlog -c "echo -n Starting name server: "
         echo "$NAME starting..."
-        #start-stop-daemon -S -n $NAME -a /usr/bin/$NAME -- -d
-        start-stop-daemon -S -n $NAME -a /home/amente/Downloads/EmLinuxCourseAssigments/A1/server/$NAME -- -d
+        start-stop-daemon -S -n $NAME -a /usr/bin/$NAME -- -d
+        #start-stop-daemon -S -n $NAME -a /home/amente/Downloads/EmLinuxCourseAssigments/A1/server/$NAME -- -d
         ### Create the lock file ###
         touch /var/lock/subsys/$NAME
         #success $"$name server startup"

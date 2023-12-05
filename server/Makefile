@@ -7,7 +7,7 @@ endif
 TARGET ?= aesdsocket
 CC ?= $(CROSS_COMPILE)gcc
 CFLAGS ?= -g -Wall -Werror
-LDFLAGS ?= -pthread -lpthread -lrt
+LDFLAGS ?= -Bstatic -pthread -lpthread -lrt
 
 
 

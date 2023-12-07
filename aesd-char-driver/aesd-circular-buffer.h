@@ -29,6 +29,7 @@ struct aesd_buffer_entry
      */
     size_t size;
 };
+typedef struct aesd_buffer_entry entry_cbuf_t;
 
 struct aesd_circular_buffer
 {
@@ -49,7 +50,10 @@ struct aesd_circular_buffer
      * set to true when the buffer entry structure is full
      */
     bool full;
+
+    size_t total_size;
 };
+typedef struct aesd_buffer_entry cbuf_t;
 
 extern struct aesd_buffer_entry *aesd_circular_buffer_find_entry_offset_for_fpos(struct aesd_circular_buffer *buffer,
             size_t char_offset, size_t *entry_offset_byte_rtn );

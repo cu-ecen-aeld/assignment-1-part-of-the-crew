@@ -1,0 +1,2 @@
+/usr/bin/ar qc libMyLib.a  CMakeFiles/MyLib.dir/aesd-circular-buffer.c.o
+/usr/bin/ranlib libMyLib.a

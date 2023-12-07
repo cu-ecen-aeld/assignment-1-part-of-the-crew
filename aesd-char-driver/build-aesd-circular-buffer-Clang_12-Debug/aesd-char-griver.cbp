@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="aesd-char-griver"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="clang"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="MyLib">
+				<Option output="/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug/libMyLib.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/llvm-10/lib/clang/10.0.0/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug/Makefile&quot;  VERBOSE=1 MyLib"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="MyLib/fast">
+				<Option output="/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug/libMyLib.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/llvm-10/lib/clang/10.0.0/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug/Makefile&quot;  VERBOSE=1 MyLib/fast"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/build-aesd-circular-buffer-Clang_12-Debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/aesd-circular-buffer.c">
+			<Option target="MyLib"/>
+		</Unit>
+		<Unit filename="/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/aesd-circular-buffer.h">
+			<Option target="MyLib"/>
+		</Unit>
+		<Unit filename="/home/amente/Downloads/EmLinuxCourseAssigments/A1/aesd-char-driver/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

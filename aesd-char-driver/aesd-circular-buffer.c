@@ -10,6 +10,12 @@
 
 #ifdef __KERNEL__
 #include <linux/string.h>
+#include <linux/module.h>
+#include <linux/init.h>
+#include <linux/printk.h>
+#include <linux/types.h>
+#include <linux/cdev.h>
+#include <linux/fs.h> // file_operations
 #else
 #include <string.h>
 #include <stdio.h>
@@ -17,7 +23,7 @@
 #endif
 
 #include "aesd-circular-buffer.h"
-
+#include "aesdchar.h"
 
 
 /**
@@ -66,7 +72,7 @@ void aesd_circular_buffer_add_entry(struct aesd_circular_buffer *buffer, const s
   if (buffer->in_offs >= AESDCHAR_MAX_WRITE_OPERATIONS_SUPPORTED)
   {
     buffer->in_offs = 0;
-    printf ("overwrap\n");
+    PDEBUG ("overwrap\n");
   }
 
   if (1 == buffer->full)
@@ -78,7 +84,7 @@ void aesd_circular_buffer_add_entry(struct aesd_circular_buffer *buffer, const s
   if (buffer->in_offs == buffer->out_offs)
   {
     buffer->full = 1;
-    printf ("buffer->full = %d\n", buffer->full);
+    PDEBUG ("buffer->full = %d\n", buffer->full);
   }
 
 }

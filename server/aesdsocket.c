@@ -32,6 +32,9 @@
 #include <sys/queue.h>
 #include <stdatomic.h>
 
+#define USE_AESD_CHAR_DEVICE 1
+
+
 typedef struct
 {
   pthread_t thread;
@@ -64,7 +67,12 @@ typedef struct
 } desc_t;
 
 //desc_t desc = {.file_path = "./aesdsocketdata"};
-desc_t desc = {.file_path = "/var/tmp/aesdsocketdata"};
+#ifdef USE_AESD_CHAR_DEVICE
+    desc_t desc = {.file_path = "/dev/aesdchar"};
+#else
+    desc_t desc = {.file_path = "/var/tmp/aesdsocketdata"};
+#endif
+    
 desc_t *desc_p = &desc;
 
 void uninit (int sig_num)
@@ -109,7 +117,9 @@ void uninit (int sig_num)
 
   if (desc_p->f_output_e)
   {
+#ifdef USE_AESD_CHAR_DEVICE
     remove(desc_p->file_path);
+#endif
     close(desc_p->f_output);
   }
   syslog (LOG_INFO, "Caught signal, exiting");
@@ -528,13 +538,13 @@ if (-1 == desc.f_output)
 desc.f_output_e = 1;
 
 
-
+#ifdef USE_AESD_CHAR_DEVICE
 status = pthread_create( &desc.thread_time, NULL, threadfunc_time, desc_p );
 if (0 != status){
   if (0 == desc.demonize) printf("can't create TIME thread status = %d\n", status);
   uninit (-1);
 }
-
+#endif
 
 
 

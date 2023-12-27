@@ -8,6 +8,9 @@
 #ifndef AESD_CHAR_DRIVER_AESDCHAR_H_
 #define AESD_CHAR_DRIVER_AESDCHAR_H_
 
+#include <linux/cdev.h>
+
+
 #define AESD_DEBUG 1  //Remove comment on this line to enable debug
 
 #undef PDEBUG             /* undef it, just in case */
@@ -28,8 +31,19 @@ struct aesd_dev
     /**
      * TODO: Add structure(s) and locks needed to complete assignment requirements
      */
-    struct cdev cdev;     /* Char device structure      */
+    struct cdev cdev;         // Char device structure
+    struct mutex lock;        // mutual exclusion semaphore
+    cbuf_t *data;             // Pointer to our data
+    /*
+    struct scull_qset *data;  // Pointer to first quantum set
+    int quantum;              // the current quantum size
+    int qset;                 // the current array size
+    unsigned long size;       // amount of data stored here
+    unsigned int access_key;  // used by sculluid and scullpriv
+    struct mutex lock;        // mutual exclusion semaphore
+    struct cdev cdev;         // Char device structure
+    */
 };
-
+typedef struct aesd_dev aesd_dev_t;
 
 #endif /* AESD_CHAR_DRIVER_AESDCHAR_H_ */

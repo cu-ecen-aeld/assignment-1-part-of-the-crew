@@ -9,17 +9,17 @@
  */
 
 #ifdef __KERNEL__
-#include <linux/string.h>
-#include <linux/module.h>
-#include <linux/init.h>
-#include <linux/printk.h>
-#include <linux/types.h>
-#include <linux/cdev.h>
-#include <linux/fs.h> // file_operations
+  #include <linux/string.h>
+  #include <linux/module.h>
+  #include <linux/init.h>
+  #include <linux/printk.h>
+  #include <linux/types.h>
+  #include <linux/cdev.h>
+  #include <linux/fs.h> // file_operations
+  #include <linux/slab.h>		// kmalloc()
 #else
-#include <string.h>
-#include <stdio.h>
-
+  #include <string.h>
+  #include <stdio.h>
 #endif
 
 #include "aesd-circular-buffer.h"
@@ -54,6 +54,31 @@ struct aesd_buffer_entry *aesd_circular_buffer_find_entry_offset_for_fpos(struct
   return (struct aesd_buffer_entry *)buffer->entry + offs;
 }
 
+ssize_t aesd_circular_buffer_allread(struct aesd_circular_buffer *buffer, char * const buf)
+{
+  uint8_t offs = buffer->out_offs;
+
+  ssize_t size_exp = 0;
+
+
+  do {
+
+    memcpy (buf + size_exp, buffer->entry[offs].buffptr, buffer->entry[offs].size);
+    size_exp += buffer->entry[offs].size;
+
+
+    offs++;
+    if (offs >= AESDCHAR_MAX_WRITE_OPERATIONS_SUPPORTED)
+      offs = 0;
+  } while (buffer->in_offs != offs);
+
+  //PDEBUG("buffer->total_size = %zu, size_exp = %zu", buffer->total_size, size_exp);
+
+  if (buffer->total_size != size_exp)
+    return -1;
+  return buffer->total_size;
+}
+
 /**
 * Adds entry @param add_entry to @param buffer in the location specified in buffer->in_offs.
 * If the buffer was already full, overwrites the oldest entry and advances buffer->out_offs to the
@@ -63,12 +88,18 @@ struct aesd_buffer_entry *aesd_circular_buffer_find_entry_offset_for_fpos(struct
 */
 void aesd_circular_buffer_add_entry(struct aesd_circular_buffer *buffer, const struct aesd_buffer_entry *add_entry)
 {
-
+  //clean previous
+  if (NULL != buffer->entry[buffer->in_offs].buffptr)
+  {
+    kfree (buffer->entry[buffer->in_offs].buffptr);
+    buffer->entry[buffer->in_offs].buffptr = NULL;
+  }
   buffer->total_size-= buffer->entry[buffer->in_offs].size;
-  buffer->entry[buffer->in_offs] = *add_entry;
+  memcpy (&buffer->entry[buffer->in_offs], add_entry, sizeof (struct aesd_buffer_entry));
   buffer->total_size+= buffer->entry[buffer->in_offs].size;
 
   buffer->in_offs++;
+
   if (buffer->in_offs >= AESDCHAR_MAX_WRITE_OPERATIONS_SUPPORTED)
   {
     buffer->in_offs = 0;
@@ -84,9 +115,8 @@ void aesd_circular_buffer_add_entry(struct aesd_circular_buffer *buffer, const s
   if (buffer->in_offs == buffer->out_offs)
   {
     buffer->full = 1;
-    PDEBUG ("buffer->full = %d\n", buffer->full);
+    //PDEBUG ("buffer->full = %d\n", buffer->full);
   }
-
 }
 
 /**

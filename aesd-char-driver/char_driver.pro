@@ -1,8 +1,5 @@
 QT -= gui
 #
-TEMPLATE = lib
-DEFINES += CHAR_1_LIBRARY
-#
 CONFIG += c11
 #
 ## The following define makes your compiler emit warnings if you use
@@ -47,9 +44,9 @@ HEADERS += \
     aesdchar.h \
     aesd-circular-buffer.h
 
-
-LINUX_HEADERS_PATH = /usr/src/linux-headers-$$system(uname -r)
-INCLUDEPATH += $$system(find -L $$LINUX_HEADERS_PATH/include -type d)
+LINUX_KERNEL_VERS = $$system(uname -r)
+LINUX_HEADERS_PATH = /usr/src/linux-headers-$$LINUX_KERNEL_VERS/include
+INCLUDEPATH += $$system(find -L $$LINUX_HEADERS_PATH -type d)
 
 
 

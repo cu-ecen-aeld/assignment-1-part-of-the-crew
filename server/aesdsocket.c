@@ -529,14 +529,6 @@ if (0 != status){
 }
 
 
-desc.f_output = open(desc.file_path, O_RDWR | O_CREAT, S_IRWXU | S_IRWXG | S_IRWXO);
-if (-1 == desc.f_output)
-{
-  if (0 == desc.demonize) printf("Cannot open the file %s\n", desc.file_path);
-  uninit (-1);
-}
-desc.f_output_e = 1;
-
 
 #ifdef USE_AESD_CHAR_DEVICE
 status = pthread_create( &desc.thread_time, NULL, threadfunc_time, desc_p );

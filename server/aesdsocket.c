@@ -581,6 +581,16 @@ while(1)
 
   SLIST_INSERT_HEAD(&desc.head, datap, entries);
 
+  if (0 == desc.f_output_e)
+  {
+    desc.f_output = open(desc.file_path, O_RDWR | O_CREAT, S_IRWXU | S_IRWXG | S_IRWXO);
+    if (-1 == desc.f_output)
+    {
+      if (0 == desc.demonize) printf("Cannot open the file %s\n", desc.file_path);
+      uninit (-1);
+    }
+    desc.f_output_e = 1;
+  }
 
   status = pthread_create( &datap->desc_list.thread, NULL, threadfunc, datap );
   if (0 != status){

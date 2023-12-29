@@ -117,7 +117,7 @@ void uninit (int sig_num)
 
   if (desc_p->f_output_e)
   {
-#ifdef USE_AESD_CHAR_DEVICE
+#ifndef USE_AESD_CHAR_DEVICE
     remove(desc_p->file_path);
 #endif
     close(desc_p->f_output);
@@ -361,24 +361,31 @@ void* threadfunc(void* thread_param)
 
   struct stat st;
   pthread_mutex_lock(&desc_p->mx);
+#ifdef USE_AESD_CHAR_DEVICE
+  st.st_size = lseek(desc.f_output, 0, SEEK_END);
+#else
   if ( -1 == fstat(desc.f_output, &st))
     if (0 == desc.demonize) printf("Problem to stat \n");
-  //pthread_mutex_unlock(&desc_p->mx);
+#endif
 
   par->wr_buf = calloc(sizeof(char) * st.st_size, 1);
-
-  //pthread_mutex_lock(&desc_p->mx);
   lseek(desc.f_output, 0, SEEK_SET);
   if ((ssize = read(desc.f_output, par->wr_buf, st.st_size)) < 0)
   {
-    if (0 == desc.demonize) printf("Problem to read file \n");
+    if (0 == desc.demonize) printf("Problem to read file\n");
+  }
+  if (0 == desc.demonize){
+    printf("read ssize = %d, st.st_size = %ld\n", ssize, st.st_size);
   }
   pthread_mutex_unlock(&desc_p->mx);
-  /*
-  for (int i = 0; i < st.st_size - 1; i++)
-    printf("%s", wr_buf);
-  printf("\nEND\n");
-  */
+
+  //if (0 == desc.demonize)
+  //{
+  //  for (int i = 0; i < st.st_size; i++)
+  //    printf("%d", (int)par->wr_buf[i]);
+  //  printf("\nEND-%s-\n", par->wr_buf);
+  //}
+
 
   if ( -1 == sendall(par->cs, par->wr_buf, (int*)&st.st_size))
     if (0 == desc.demonize) printf("Problem to send \n");
@@ -520,7 +527,7 @@ if (1 == desc.demonize)
   }
 }
 
-desc.demonize = 1;
+//desc.demonize = 1;
 
 status = listen(desc.server_fd, 10);
 if (0 != status){
@@ -530,7 +537,7 @@ if (0 != status){
 
 
 
-#ifdef USE_AESD_CHAR_DEVICE
+#ifndef USE_AESD_CHAR_DEVICE
 status = pthread_create( &desc.thread_time, NULL, threadfunc_time, desc_p );
 if (0 != status){
   if (0 == desc.demonize) printf("can't create TIME thread status = %d\n", status);

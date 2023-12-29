@@ -60,7 +60,7 @@ ssize_t aesd_read(struct file *filp, char __user *buf, size_t count,
     aesd_dev_t * const dev = filp->private_data;
     const ssize_t kcount = dev->data->total_size;
     char * const kbuf = kmalloc(kcount, GFP_KERNEL);
-
+    //int i;
 
     PDEBUG("read %zu bytes with offset %lld",count,*f_pos);
     /**
@@ -81,11 +81,15 @@ ssize_t aesd_read(struct file *filp, char __user *buf, size_t count,
        count = 0;
        goto zero;
     }
-    if (count > kcount - *f_pos)
+    if (count >= kcount - *f_pos)
     {
       count = kcount - *f_pos;
-      if (copy_to_user(buf, kbuf + *f_pos, count))
-        ;
+      //if (copy_to_user(buf, kbuf + *f_pos, count))
+      if (copy_to_user(buf, kbuf, count))
+        PDEBUG("bad copy_to_user");
+      //for (i = 0; i < count; i++)
+      //  PDEBUG("%c", kbuf[i]);
+      //PDEBUG("\nEND-count = %ld", count);
     }
     *f_pos += count;
 
@@ -144,6 +148,7 @@ ssize_t aesd_write(struct file *filp, const char __user *buf, size_t count,
     if ('\n' == kbuf[count - 1] )
     {
       aesd_circular_buffer_add_entry(dev->data, &dev->data->chunk);
+      *f_pos += dev->data->chunk.size;
       //PDEBUG("write %zu bytes :%s",dev->data->chunk.size,dev->data->chunk.buffptr);
       dev->data->chunk.buffptr = NULL;
       dev->data->chunk.size = 0;
@@ -151,11 +156,40 @@ ssize_t aesd_write(struct file *filp, const char __user *buf, size_t count,
 
     kfree(kbuf);
     kbuf = NULL;
+
     mutex_unlock(&dev->lock);
     return count;
 }
+//size = lseek(*filp, 0, iSEEK_END)
+loff_t aesd_llseek(struct file *filp, loff_t off, int whence)
+{
+  aesd_dev_t *dev = filp->private_data;
+  loff_t newpos;
+
+  switch(whence) {
+   case 0: /* SEEK_SET */
+    newpos = off;
+    break;
+
+   case 1: /* SEEK_CUR */
+    newpos = filp->f_pos + off;
+    break;
+
+   case 2: /* SEEK_END */
+    newpos = dev->data->total_size + off;
+    break;
+
+   default: /* can't happen */
+    return -EINVAL;
+  }
+  if (newpos<0) return -EINVAL;
+  filp->f_pos = newpos;
+  return newpos;
+}
+
 struct file_operations aesd_fops = {
     .owner =    THIS_MODULE,
+    .llseek =   aesd_llseek,
     .read =     aesd_read,
     .write =    aesd_write,
     .open =     aesd_open,

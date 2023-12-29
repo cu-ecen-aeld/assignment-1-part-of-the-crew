@@ -18,6 +18,7 @@ aesdchar-y := aesd-circular-buffer.o main.o
 else
 
 KERNELDIR ?= /lib/modules/$(shell uname -r)/build
+#KERNELDIR = /home/amente/Downloads/EmLinuxCourseAssigments/linux-qemuarm64-standard-build
 PWD       := $(shell pwd)
 
 modules:

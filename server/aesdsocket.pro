@@ -6,7 +6,7 @@ CONFIG -= qt
 SOURCES += \
   aesdsocket.c
 
-#HEADERS += \
-#  queue.h
+HEADERS +=  \
+    ./../aesd-char-driver/aesd_ioctl.h
 
 LIBS += -lpthread

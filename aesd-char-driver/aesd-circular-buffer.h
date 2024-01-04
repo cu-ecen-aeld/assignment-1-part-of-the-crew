@@ -54,10 +54,15 @@ struct aesd_circular_buffer
     bool last_uncomplete;
 
     size_t total_size;
+    uint32_t  write_cmd;
+    uint32_t  write_cmd_offset;
+    uint32_t  buf_offset;
 };
 typedef struct aesd_circular_buffer cbuf_t;
 
-extern ssize_t aesd_circular_buffer_allread(struct aesd_circular_buffer *buffer, char * const buf);
+extern ssize_t aesd_circular_buffer_allread (struct aesd_circular_buffer *buffer, char * const buf);
+
+extern int aesd_circular_buffer_set_write_off(struct aesd_circular_buffer *buffer, int, int);
 
 extern struct aesd_buffer_entry *aesd_circular_buffer_find_entry_offset_for_fpos(struct aesd_circular_buffer *buffer,
             size_t char_offset, size_t *entry_offset_byte_rtn );

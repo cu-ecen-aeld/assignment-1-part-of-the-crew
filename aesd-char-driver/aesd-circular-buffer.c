@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file aesd-circular-buffer.c
  * @brief Functions and data related to a circular buffer imlementation
  *
@@ -24,6 +24,18 @@
 
 #include "aesd-circular-buffer.h"
 #include "aesdchar.h"
+
+
+int aesd_circular_buffer_set_write_off(struct aesd_circular_buffer *buffer, int write_cmd, int write_cmd_offset)
+{
+  if (write_cmd >= AESDCHAR_MAX_WRITE_OPERATIONS_SUPPORTED)
+    return -1;
+
+  buffer->write_cmd = write_cmd;
+  buffer->write_cmd_offset = write_cmd_offset;
+  buffer->buf_offset = 0;
+  return 0;
+}
 
 
 /**
@@ -54,29 +66,48 @@ struct aesd_buffer_entry *aesd_circular_buffer_find_entry_offset_for_fpos(struct
   return (struct aesd_buffer_entry *)buffer->entry + offs;
 }
 
-ssize_t aesd_circular_buffer_allread(struct aesd_circular_buffer *buffer, char * const buf)
+//--------------------------------------------------------------------------------------------------
+
+ssize_t aesd_circular_buffer_allread ( struct aesd_circular_buffer *buffer, char * const buf)
 {
   uint8_t offs = buffer->out_offs;
-
+  int offset = 0;
   ssize_t size_exp = 0;
 
+/*
+  offs += buffer->write_cmd;
+  if (offs >= AESDCHAR_MAX_WRITE_OPERATIONS_SUPPORTED)
+    offs -= AESDCHAR_MAX_WRITE_OPERATIONS_SUPPORTED;
 
+  //buffer->write_cmd_offset
+*/
+   //offset = buffer->write_cmd_offset;
   do {
 
     memcpy (buf + size_exp, buffer->entry[offs].buffptr, buffer->entry[offs].size);
     size_exp += buffer->entry[offs].size;
 
+    if(++offset <= buffer->write_cmd)
+    {
+      PDEBUG("offset = %u, write_cmd = %u, buf_offset = %u", offset, buffer->write_cmd, buffer->buf_offset);
+      if (0 != buffer->write_cmd)
+        buffer->buf_offset += buffer->entry[offs].size;
+      //offset++;
 
+    }
     offs++;
     if (offs >= AESDCHAR_MAX_WRITE_OPERATIONS_SUPPORTED)
       offs = 0;
   } while (buffer->in_offs != offs);
 
+  buffer->buf_offset += buffer->write_cmd_offset;
+
   //PDEBUG("buffer->total_size = %zu, size_exp = %zu", buffer->total_size, size_exp);
 
-  if (buffer->total_size != size_exp)
-    return -1;
-  return buffer->total_size;
+  //if (buffer->total_size != size_exp)
+  //  return -1;
+  //return buffer->total_size;
+  return size_exp;
 }
 
 /**

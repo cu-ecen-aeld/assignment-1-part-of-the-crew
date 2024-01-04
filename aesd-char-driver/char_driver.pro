@@ -42,7 +42,8 @@ SOURCES += \
 
 HEADERS += \
     aesdchar.h \
-    aesd-circular-buffer.h
+    aesd-circular-buffer.h \
+    aesd_ioctl.h
 
 LINUX_KERNEL_VERS = $$system(uname -r)
 LINUX_HEADERS_PATH = /usr/src/linux-headers-$$LINUX_KERNEL_VERS/include

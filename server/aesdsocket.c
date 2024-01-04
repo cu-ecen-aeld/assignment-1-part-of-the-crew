@@ -32,6 +32,8 @@
 #include <sys/queue.h>
 #include <stdatomic.h>
 
+#include "./../aesd-char-driver/aesd_ioctl.h"
+
 #define USE_AESD_CHAR_DEVICE 1
 
 
@@ -321,7 +323,13 @@ void* threadfunc(void* thread_param)
   */
   //const char* file_path = "/var/tmp/aesdsocketdata";
 
-
+  const char* cmd_ioctl = "AESDCHAR_IOCSEEKTO:X,Y";
+  const int sz_cmd_ioctl  = sizeof(cmd_ioctl);
+  char wr_cmd_buf[2];
+  char wr_cmd_offset_buf[2];
+  memset (wr_cmd_buf, 0, sizeof(wr_cmd_buf));
+  memset (wr_cmd_offset_buf, 0, sizeof(wr_cmd_offset_buf));
+  struct aesd_seekto data_seekto;
   int ssize;
   const int SIZEBUF = 100;
   char buf[SIZEBUF];
@@ -333,6 +341,29 @@ void* threadfunc(void* thread_param)
       if ('\n' == buf[i])
       {
         ssize = i + 1;
+        if (ssize >= sz_cmd_ioctl)
+        {
+          int retcmp = strncmp(cmd_ioctl, buf, 19);
+          if( 0 == retcmp) {
+             printf("ioctl buf = %s\n", buf);
+             memcpy (wr_cmd_buf, &buf[19], 1);
+             if (',' != buf[20])
+             {
+               memcpy (wr_cmd_buf, &buf[20], 1);
+             } else {
+               memcpy (wr_cmd_offset_buf, &buf[20], 1);
+               if ('\n' != buf[21])
+                 memcpy (wr_cmd_offset_buf, &buf[21], 1);
+             }
+
+             data_seekto.write_cmd = strtoul (wr_cmd_buf, NULL, 0);
+             data_seekto.write_cmd_offset = strtoul (wr_cmd_offset_buf, NULL, 0);
+             int res = ioctl(desc.f_output, AESDCHAR_IOCSEEKTO, &data_seekto);
+             printf("ioctl res = %d, %d, %d\n", res, data_seekto.write_cmd, data_seekto.write_cmd_offset);
+             goto note_a;
+          }
+        }
+
         pthread_mutex_lock(&desc_p->mx);
         write(desc.f_output, buf, ssize);
         pthread_mutex_unlock(&desc_p->mx);
@@ -362,14 +393,17 @@ void* threadfunc(void* thread_param)
   struct stat st;
   pthread_mutex_lock(&desc_p->mx);
 #ifdef USE_AESD_CHAR_DEVICE
+  off_t off = lseek(desc.f_output, 0, SEEK_CUR);
+  off = off;
   st.st_size = lseek(desc.f_output, 0, SEEK_END);
+  lseek(desc.f_output, 0, SEEK_SET);
 #else
   if ( -1 == fstat(desc.f_output, &st))
     if (0 == desc.demonize) printf("Problem to stat \n");
 #endif
 
   par->wr_buf = calloc(sizeof(char) * st.st_size, 1);
-  lseek(desc.f_output, 0, SEEK_SET);
+
   if ((ssize = read(desc.f_output, par->wr_buf, st.st_size)) < 0)
   {
     if (0 == desc.demonize) printf("Problem to read file\n");
@@ -387,10 +421,10 @@ void* threadfunc(void* thread_param)
   //}
 
 
-  if ( -1 == sendall(par->cs, par->wr_buf, (int*)&st.st_size))
+  if ( -1 == sendall(par->cs, par->wr_buf, (int*)&ssize))
     if (0 == desc.demonize) printf("Problem to send \n");
 
-  if (0 == desc.demonize) printf("Send...%ld bytes\n", st.st_size);
+  if (0 == desc.demonize) printf("Send...%u bytes\n", ssize);
 
   par->cs_e = 0;
 /*
@@ -572,7 +606,7 @@ while(1)
 
   // Write to slist
   datap = calloc(sizeof(slist_data_t), 1);
-  if (0 == desc.demonize) printf("calloc: %p, cs = %d\n", datap, cs);
+  //if (0 == desc.demonize) printf("calloc: %p, cs = %d\n", datap, cs);
   datap->desc_list.cs = cs;
   datap->desc_list.cs_e = cs_e;
   datap->desc_list.their_addr = their_addr;

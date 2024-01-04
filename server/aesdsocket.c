@@ -345,7 +345,8 @@ void* threadfunc(void* thread_param)
         {
           int retcmp = strncmp(cmd_ioctl, buf, 19);
           if( 0 == retcmp) {
-             printf("ioctl buf = %s\n", buf);
+             if (0 == desc.demonize)
+                printf("ioctl buf = %s\n", buf);
              memcpy (wr_cmd_buf, &buf[19], 1);
              if (',' != buf[20])
              {
@@ -359,7 +360,7 @@ void* threadfunc(void* thread_param)
              data_seekto.write_cmd = strtoul (wr_cmd_buf, NULL, 0);
              data_seekto.write_cmd_offset = strtoul (wr_cmd_offset_buf, NULL, 0);
              int res = ioctl(desc.f_output, AESDCHAR_IOCSEEKTO, &data_seekto);
-             printf("ioctl res = %d, %d, %d\n", res, data_seekto.write_cmd, data_seekto.write_cmd_offset);
+             //printf("ioctl res = %d, %d, %d\n", res, data_seekto.write_cmd, data_seekto.write_cmd_offset);
              goto note_a;
           }
         }
@@ -367,7 +368,8 @@ void* threadfunc(void* thread_param)
         pthread_mutex_lock(&desc_p->mx);
         write(desc.f_output, buf, ssize);
         pthread_mutex_unlock(&desc_p->mx);
-        //printf ("2Printing in file: %s )\n", buf);
+        if (0 == desc.demonize)
+          printf ("2Printing in file: %s )\n", buf);
         goto note_a;
       }
     }
